@@ -2,6 +2,7 @@ import { ReactElement } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useGetSetting, useSetSetting } from "../../utils/querySettings";
 import { ISpool } from "../spools/model";
+import dayjs from "dayjs";
 
 export interface PrintSettings {
   id: string;
@@ -58,8 +59,11 @@ interface GenericObject {
 }
 
 function getTagValue(tag: string, obj: GenericObject): any {
+  // Check if tag has a format specifier
+  const [tagName, format] = tag.split(":");
+
   // Split tag by .
-  const tagParts = tag.split(".");
+  const tagParts = tagName.split(".");
   if (tagParts[0] === "extra") {
     const extraValue = obj.extra[tagParts[1]];
     if (extraValue === undefined) {
@@ -73,6 +77,12 @@ function getTagValue(tag: string, obj: GenericObject): any {
   if (typeof value === "object") {
     return getTagValue(tagParts.slice(1).join("."), value);
   }
+
+  // If we have a format and the value is a date string, format it
+  if (format && typeof value === "string" && (tagName === "first_used" || tagName === "last_used" || tagName === "registered")) {
+    return dayjs.utc(value).local().format(format);
+  }
+
   return value;
 }
 
