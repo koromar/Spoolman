@@ -31,7 +31,8 @@ root_logger.addHandler(console_handler)
 
 # Fix uvicorn logging
 logging.getLogger("uvicorn").setLevel(log_level)
-logging.getLogger("uvicorn").removeHandler(logging.getLogger("uvicorn").handlers[0])
+if logging.getLogger("uvicorn").handlers:
+    logging.getLogger("uvicorn").removeHandler(logging.getLogger("uvicorn").handlers[0])
 logging.getLogger("uvicorn").addHandler(console_handler)
 
 logging.getLogger("uvicorn.error").setLevel(log_level)
@@ -153,7 +154,7 @@ async def startup() -> None:
     # There is some issue with the uvicorn worker that causes the process to hang when running alembic directly.
     # See: https://github.com/sqlalchemy/alembic/discussions/1155
     project_root = Path(__file__).parent.parent
-    subprocess.run(["alembic", "upgrade", "head"], check=True, cwd=project_root)  # noqa: S603, S607, ASYNC101
+    subprocess.run(["alembic", "upgrade", "head"], check=True, cwd=project_root)  # noqa: S603, S607, ASYNC221
 
     # Setup scheduler
     schedule = Scheduler()
