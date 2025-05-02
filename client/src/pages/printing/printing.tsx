@@ -4,6 +4,8 @@ import { useGetSetting, useSetSetting } from "../../utils/querySettings";
 import { ISpool } from "../spools/model";
 import dayjs from "dayjs";
 
+console.log("%%%%% LOADING PRINTING.TSX - LATEST VERSION %%%%%");
+
 export interface PrintSettings {
   id: string;
   name?: string;
